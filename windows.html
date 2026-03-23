@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 10 Web Clone</title>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+    --accent: #e5a2af;
+    --taskbar-height: 45px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    background: url('wed.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+}
+
+/* Desktop icons */
+.desktop {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    height: calc(100vh - var(--taskbar-height));
+}
+
+.icon {
+    width: 60px;
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+}
+
+.icon div {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(30,30,30,0.6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    font-size: 28px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: background 0.2s;
+}
+.icon div:hover {
+    background-color: #e5a2af(128,0,255,0.6);
+}
+
+/* Taskbar */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--taskbar-height);
+    background-color: rgba(30,30,30,0.85);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+}
+
+.start-button {
+    width: 38px;
+    height: 38px;
+    background-color: var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    color: #fff;
+}
+
+.task-icon {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+.task-icon:hover {
+    background-color: rgba(255,255,255,0.25);
+}
+
+/* System tray */
+.system-tray {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+/* Window */
+.window {
+    width: 500px; /* bigger width */
+    height: 350px; /* bigger height */
+    background-color: rgba(45,45,45,0.85); /* slightly transparent */
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+}
+
+.window-header {
+    background-color: rgba(60,60,60,0.9);
+    padding: 6px 10px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.window-body {
+    flex: 1;
+    padding: 10px;
+    overflow: auto;
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+.window-controls span {
+    margin-left: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Start menu */
+.start-menu {
+    position: fixed;
+    bottom: var(--taskbar-height);
+    left: 0;
+    width: 260px;
+    height: 450px;
+    background-color: rgba(45,45,45,0.95);
+    display: none;
+    flex-direction: column;
+    border-top-right-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    backdrop-filter: blur(15px);
+    padding: 15px;
+    font-size: 14px;
+    color: #fff;
+    overflow-y: auto;
+}
+
+.start-menu h3 {
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.start-menu-item {
+    padding: 8px;
+    margin: 4px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.start-menu-item:hover {
+    background-color: var(--accent);
+    color: #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- Desktop icons -->
+<div class="desktop">
+    <div class="icon" onclick="openWindow('window-about')">
+        <div><i class="fa-solid fa-user"></i></div>
+        <span>About</span>
+    </div>
+    <div class="icon" onclick="window.location.href='notes.html'">
+        <div><i class="fa-solid fa-note-sticky"></i></div>
+        <span>Notes</span>
+    </div>
+    <div class="icon" onclick="window.open('https://github.com/yourusername','_blank')">
+        <div><i class="fa-brands fa-github"></i></div>
+        <span>GitHub</span>
+    </div>
+</div>
+
+<!-- Taskbar -->
+<div class="taskbar">
+    <div class="start-button" onclick="toggleStartMenu()"><i class="fa-brands fa-windows"></i></div>
+    <div class="task-icon"><i class="fa-solid fa-computer"></i></div>
+    <div class="task-icon"><i class="fa-solid fa-globe"></i></div>
+
+    <div class="system-tray">
+        <i class="fa-solid fa-volume-high"></i>
+        <i class="fa-solid fa-battery-three-quarters"></i>
+        <i class="fa-solid fa-wifi"></i>
+        <span id="clock">10:30 PM</span>
+    </div>
+</div>
+
+<!-- Start Menu -->
+<div class="start-menu" id="startMenu">
+    <h3>Start Menu</h3>
+    <div class="start-menu-item" onclick="window.location.href='notes.html'">
+        <i class="fa-solid fa-note-sticky"></i> Notes
+    </div>
+    <div class="start-menu-item" onclick="openWindow('window-about')">
+        <i class="fa-solid fa-user"></i> About
+    </div>
+    <div class="start-menu-item" onclick="window.open('https://github.com/yourusername', '_blank')">
+        <i class="fa-brands fa-github"></i> GitHub
+    </div>
+    <div class="start-menu-item" onclick="openWindow('window-browser')">
+        <i class="fa-solid fa-globe"></i> Browser
+    </div>
+    <div class="start-menu-item" onclick="openWindow('window-calc')">
+        <i class="fa-solid fa-calculator"></i> Calculator
+    </div>
+    <div class="start-menu-item" onclick="openWindow('window-panel')">
+        <i class="fa-solid fa-desktop"></i> Control Panel
+    </div>
+    <div class="start-menu-item" onclick="openWindow('window-music')">
+        <i class="fa-solid fa-music"></i> Music
+    </div>
+</div>
+
+<!-- Windows -->
+<div class="window" id="window-about">
+    <div class="window-header" onmousedown="startDrag(event,'window-about')">
+        About Me
+        <div class="window-controls">
+            <span onclick="minimize('window-about')">—</span>
+            <span onclick="maximize('window-about')">□</span>
+            <span onclick="closeWindow('window-about')">✕</span>
+        </div>
+    </div>
+    <div class="window-body">
+        <p>Hello! This window contains info about me.</p>
+    </div>
+</div>
+
+<div class="window" id="window-browser">
+    <div class="window-header" onmousedown="startDrag(event,'window-browser')">
+        Browser
+        <div class="window-controls">
+            <span onclick="minimize('window-browser')">—</span>
+            <span onclick="maximize('window-browser')">□</span>
+            <span onclick="closeWindow('window-browser')">✕</span>
+        </div>
+    </div>
+    <div class="window-body">
+        <p>Open your favorite websites here!</p>
+    </div>
+</div>
+
+<div class="window" id="window-calc">
+    <div class="window-header" onmousedown="startDrag(event,'window-calc')">
+        Calculator
+        <div class="window-controls">
+            <span onclick="minimize('window-calc')">—</span>
+            <span onclick="maximize('window-calc')">□</span>
+            <span onclick="closeWindow('window-calc')">✕</span>
+        </div>
+    </div>
+    <div class="window-body">
+        <p>Calculator functionality can go here.</p>
+    </div>
+</div>
+
+<div class="window" id="window-panel">
+    <div class="window-header" onmousedown="startDrag(event,'window-panel')">
+        Control Panel
+        <div class="window-controls">
+            <span onclick="minimize('window-panel')">—</span>
+            <span onclick="maximize('window-panel')">□</span>
+            <span onclick="closeWindow('window-panel')">✕</span>
+        </div>
+    </div>
+    <div class="window-body">
+        <p>Control Panel contents go here.</p>
+    </div>
+</div>
+
+<div class="window" id="window-music">
+    <div class="window-header" onmousedown="startDrag(event,'window-music')">
+        Music
+        <div class="window-controls">
+            <span onclick="minimize('window-music')">—</span>
+            <span onclick="maximize('window-music')">□</span>
+            <span onclick="closeWindow('window-music')">✕</span>
+        </div>
+    </div>
+    <div class="window-body">
+        <p>Music player window.</p>
+    </div>
+</div>
+
+<script>
+let zIndex = 1;
+
+// Clock
+function updateClock() {
+    const clock = document.getElementById('clock');
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    clock.textContent = `${hours}:${minutes} ${ampm}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function toggleStartMenu() {
+    const menu = document.getElementById('startMenu');
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
+
+// Window controls
+function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
+function minimize(id) { document.getElementById(id).style.display = 'none'; }
+function maximize(id) {
+    const win = document.getElementById(id);
+    if (win.style.width === '100%') {
+        win.style.width = '500px';
+        win.style.height = '350px';
+        win.style.top = '50px';
+        win.style.left = '50px';
+    } else {
+        win.style.width = '100%';
+        win.style.height = 'calc(100% - 45px)';
+        win.style.top = '0';
+        win.style.left = '0';
+    }
+}
+
+function openWindow(id) {
+    const win = document.getElementById(id);
+    win.style.display = 'flex';
+    win.style.zIndex = ++zIndex;
+}
+
+// Dragging
+let currentDrag = null, offsetX = 0, offsetY = 0;
+function startDrag(e,id){
+    currentDrag = document.getElementById(id);
+    offsetX = e.clientX - currentDrag.offsetLeft;
+    offsetY = e.clientY - currentDrag.offsetTop;
+    currentDrag.style.zIndex = ++zIndex;
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', stopDrag);
+}
+function dragMove(e){
+    if(!currentDrag) return;
+    currentDrag.style.left = e.clientX - offsetX + 'px';
+    currentDrag.style.top = e.clientY - offsetY + 'px';
+}
+function stopDrag(){
+    currentDrag = null;
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', stopDrag);
+}
+</script>
+</body>
+</html>

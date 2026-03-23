@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Omega Terminal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+    --accent: #dfafa9;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'JetBrains Mono', monospace;
+}
+
+body{
+    height:100vh;
+    background:url("4.jpg") no-repeat center center/cover;
+    overflow:hidden;
+    position: relative;
+}
+
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.82);
+}
+
+/* Top workspace bar */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:36px;
+    background:rgba(0,0,0,0.9);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    font-size:13px;
+    color:#aaa;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    z-index: 1000;
+}
+
+.topbar i{
+    opacity:0.75;
+    font-size:14px;
+}
+
+.workspaces span{
+    margin-right:14px;
+    opacity:0.4;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.workspaces span.active{
+    opacity:1;
+    border-bottom:2px solid var(--accent);
+}
+
+/* Terminal */
+.terminal{
+    position:absolute;
+    top:60px;
+    left:60px;
+    right:60px;
+    bottom:40px;
+
+    background:rgba(0,0,0,0.30);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+
+    border:1px solid rgba(255,0,0,0.15);
+    border-radius:16px;
+
+    padding:55px 70px;
+    color:#e0e0e0;
+    overflow:auto;
+    font-size:17px;
+    line-height:1.6;
+}
+
+/* Scrollbar */
+.terminal::-webkit-scrollbar{
+    width:6px;
+}
+.terminal::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,0.15);
+    border-radius:10px;
+}
+.terminal{
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,0.15) transparent;
+}
+
+.banner{
+    font-family:"Courier New", monospace;
+    font-weight:bold;
+    font-size:14px;
+    line-height:1.1;
+    white-space:pre;
+    color:#cfcfcf;
+    margin-bottom:18px;
+}
+
+.accent{
+    color:var(--accent);
+}
+
+.prompt{
+    color:var(--accent);
+}
+
+.output{
+    margin-bottom:8px;
+    white-space:pre-wrap;
+}
+
+.input-line{
+    display:flex;
+    align-items:center;
+}
+
+input{
+    background:transparent;
+    border:none;
+    outline:none;
+    color:#f1f1f1;
+    font-size:16px;
+    width:100%;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="workspaces">
+        <span class="active">1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+    </div>
+
+    <div>
+        <i class="fa-solid fa-shield-halved" style="color:var(--accent); margin-right:6px;"></i>
+        aps@Omega:~
+    </div>
+
+    <div style="display:flex; align-items:center; gap:14px;">
+        <i class="fa-solid fa-wifi"></i>
+        <i class="fa-solid fa-volume-high"></i>
+        <i class="fa-solid fa-battery-three-quarters"></i>
+ f       <span id="clock"></span>
+    </div>
+</div>
+
+<div class="terminal" id="terminal">
+
+
+
+
+<div class="output">Omega Linux 2026.1</div>
+<div class="output accent">
+<i class="fa-solid fa-terminal"></i> Type "help" to get started.
+</div>
+
+<div class="input-line">
+    <span class="prompt">aps@Omega:~$&nbsp;</span>
+    <input type="text" id="commandInput" autofocus>
+</div>
+
+</div>
+
+<script>
+const terminal = document.getElementById("terminal");
+
+function getInput(){
+    return document.getElementById("commandInput");
+}
+
+function printOutput(html){
+    const div = document.createElement("div");
+    div.className = "output";
+    div.innerHTML = html;
+    terminal.insertBefore(div, terminal.lastElementChild);
+}
+
+function runCommand(cmd){
+
+    switch(cmd){
+
+        case "help":
+            printOutput(`
+<span class="accent"><i class="fa-solid fa-circle-info"></i> Available Commands:</span>
+
+<i class="fa-solid fa-user"></i> whoami
+<i class="fa-solid fa-desktop"></i> neofetch
+<i class="fa-solid fa-calendar"></i> date
+<i class="fa-solid fa-microchip"></i> uname -a
+<i class="fa-solid fa-book"></i> obsidian
+<i class="fa-solid fa-trash"></i> trash
+<i class="fa-solid fa-broom"></i> clear
+<i class="fa-solid fa-power-off"></i> shutdown
+            `);
+            break;
+
+        case "whoami":
+            printOutput(`
+Amal 
+Red Teamer | DevOps Explorer | Security Researcher
+Focus: Active Directory, Exploit Dev, Kubernetes
+            `);
+            break;
+
+        case "neofetch":
+           printOutput(`
+ /\\_/\\        Omega Linux 2026.1
+(=^.^=)       Kernel: 7.1.0-hyperperformance
+ > ^ <        CPU: Ryzen 9 9950X
+              GPU: RX 7900 XTX
+              Memory: 16GB
+`);
+            break;
+
+        case "clear":
+            location.reload();
+            break;
+
+        case "obsidian":
+            printOutput(`<span class="accent">Opening Obsidian...</span>`);
+            setTimeout(()=>{
+                window.location.href="notes.html";
+            },800);
+            break;
+
+        case "trash":
+            printOutput(`Nothing here....Look Around You may can find Ester Eggs`);
+            break;
+
+        case "date":
+            printOutput(`${new Date()}`);
+            break;
+
+        case "uname -a":
+            printOutput(`Linux AMAL 7.1.0-hyperperformance x86_64 GNU/Linux`);
+            break;
+
+        case "shutdown":
+            printOutput(`<span class="accent"><i class="fa-solid fa-power-off"></i> Shutting down...</span>`);
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1000);
+            break;
+
+        default:
+            printOutput(`You are not allowed to do this : ${cmd}`);
+    }
+}
+
+function handleInput(e){
+    if(e.key==="Enter"){
+        const input=getInput();
+        const command=input.value.trim();
+        printOutput(`<span class="prompt">ap@AMAL:~$</span> ${command}`);
+        runCommand(command);
+        input.value="";
+        terminal.scrollTop=terminal.scrollHeight;
+    }
+}
+
+getInput().addEventListener("keydown",handleInput);
+document.addEventListener("click",()=>getInput().focus());
+document.addEventListener("keydown",()=>getInput().focus());
+
+function updateClock(){
+    const now=new Date();
+    document.getElementById("clock").textContent=
+        now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+
+</body>
+</html>

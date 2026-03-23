@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Omega Boot Loader</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Source Code Pro', monospace;
+}
+
+body{
+    height:100vh;
+    background:url("4.jpg") no-repeat center center/cover;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#e5e5e5;
+}
+
+/* Dark overlay */
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+}
+
+/* Wide Menu Container */
+.boot-menu{
+    position:relative;
+    width:1000px;
+    padding:40px 80px;
+}
+
+/* Menu */
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    padding:16px 24px;
+    margin:10px 0;
+    font-size:20px;
+    border-radius:6px;
+    transition:background 0.2s ease;
+    cursor:pointer;
+}
+
+/* Selected Item */
+.menu li.selected{
+    background:rgba(255,255,255,0.15);
+}
+
+/* Footer */
+.footer{
+    position:absolute;
+    bottom:30px;
+    left:0;
+    right:0;
+    text-align:center;
+    font-size:15px;
+    color:#cfcfcf;
+    opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="boot-menu">
+    <ul class="menu">
+        <li class="selected">Omega Linux</li>
+        <li>Windows</li>
+        <li>About</li>
+        <li>Advanced / Recovery Mode</li>
+    </ul>
+</div>
+
+<div class="footer">
+    ↑ ↓ : navigate &nbsp;&nbsp;|&nbsp;&nbsp; Enter : boot &nbsp;&nbsp;|&nbsp;&nbsp; boot / click windows if you need GUI ineterface  &nbsp;&nbsp;|&nbsp;&nbsp; c : cmd-line
+</div>
+
+<script>
+const items = document.querySelectorAll(".menu li");
+let current = 0;
+
+/* Pages to redirect */
+const pages = [
+    "linux.html",
+    "windows.html",
+    "about.html",
+    "recovery.html"
+];
+
+/* Boot function */
+function boot() {
+    window.location.href = pages[current];
+}
+
+/* Keyboard Navigation */
+document.addEventListener("keydown", (e) => {
+    items[current].classList.remove("selected");
+
+    if (e.key === "ArrowDown") {
+        current = (current + 1) % items.length;
+    } 
+    else if (e.key === "ArrowUp") {
+        current = (current - 1 + items.length) % items.length;
+    } 
+    else if (e.key === "Enter") {
+        boot();
+        return;
+    }
+
+    items[current].classList.add("selected");
+});
+
+/* Mouse Click Support */
+items.forEach((item, index) => {
+    item.addEventListener("click", () => {
+        current = index;
+        boot();
+    });
+});
+</script>
+
+</body>
+</html>
